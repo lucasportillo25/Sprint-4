@@ -1,6 +1,7 @@
 #Defino librerias a utilixar
 import csv
 from distutils.file_util import write_file
+import datatime as dt
 
 #Defino constantes y variables
 amigos = []
@@ -49,7 +50,7 @@ def grabarCSV(dni, busqueda):
     print("Se grabo el archivo CSV")  
 
 #Defino el método principal
-if __name__=="__main__":
+if __name__ == "__main__":
     while runtime:
         print(opciones)
         op = input()
@@ -59,7 +60,7 @@ if __name__=="__main__":
             tipo = input("Seleccione el tipo de cheque a buscar EMITIDO o DEPOSITADO: \n")
             salida = input("Elija si desea recibir la salida por PANTALLA o CSV: \n")
             try:
-                resultado = buscarPorDni(dni, tipo)
+                resultado = BuscarPorDni(dni, tipo)
                 if salida == "PANTALLA":
                     print(resultado)
                 elif salida == "CSV":
