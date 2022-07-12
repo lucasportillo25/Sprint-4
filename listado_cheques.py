@@ -41,7 +41,7 @@ def BuscarPorDni(dni, tipo):
             busqueda.append(cheque)
 
 def grabarCSV(dni, busqueda):
-    file = open(dni + "_" + str.(datatime)+".csv","w")
+    file = open(dni + "_" + str(datatime) +".csv", "w")
     csvfile = csv.writer(file)
     for row in busqueda:
         csvfile.writerow([row["NumeroCuentaOrigen"], row["Valor"], row["FechaOrigen"], row["FechaPago"]])
