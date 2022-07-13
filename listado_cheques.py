@@ -17,8 +17,8 @@ chequesporpantalla = []
 
 #Defino funciones
 def readcsv(abrirarchivo):
-    if abrirarchivo == "chequera":
-        file = open("chequera.csv", "r")
+    if abrirarchivo == "cheques":
+        file = open("cheques.csv", "r")
         csvcheques = csv.reader(file)
         for linea in csvcheques:
             if linea != []:
@@ -26,7 +26,7 @@ def readcsv(abrirarchivo):
                 filecsvdni2.append(data)
         file.close()
         print("A continuación le solicitaremos el DNI para poder realizar su consulta.")
-    elif abrirarchivo != "chequera":
+    elif abrirarchivo != "cheques":
         print("El archivo no se encuentra")
         selectoption = input("1. Intenta nuevamente... \n2. Salir \n")
         if selectoption == "1":
