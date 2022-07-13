@@ -1,36 +1,44 @@
 #Defino librerias a utilixar
 import csv
 from distutils.file_util import write_file
-import datatime as dt
+import datetime as dt
+from tkinter.filedialog import Open
 
 #Defino constantes y variables
-amigos = []
+opciones = """
+"Bienvenido/a al Programa de Control de Cheques"
+"Ingrese la opcion que desee"
+"1- Cagar Nuevo cheque"
+"2- Salir"
+"""
+datatime = dt.date.today()
 
 #Defino funciones
-def readFile():
-    file = open("phonebook.csv", "r")
-    csvfile = csv.reader(file)
-    for row in csvfile:
-        if row in csvfile:
-            if row != []:
-                data = {"nombre":row[0], "Apellido":row[1], "Teléfono": row[2], "Cumpleaños": row[3]}
-                #amigos.append(data)
-    file.close()
-    return cheques
+def 
 
-def grabarAmigos():
-    nombre = input("Ingrese nombre: ")
-    apellido = input("Ingrese apellido: ")
-    telefono = input("Ingrese telefono: ")
-    cumpleaños = input("Ingrese cumpleaños: ")
-    data = {"Nombre":nombre, "Apellido":apellido, "Telefono": telefono, "Cumpleaños": cumpleaños}
-    amigos.append(data)
-    writeFile(amigos)
+def readcsv(abrirarchivo):
+    if abrirarchivo == "chequera":
+        file = open("chequera.csv", "r")
+        csvcheques = csv.reader(file)
+        for linea in csvcheques:
+            if linea != []:
+                data = {"NroCheque":linea[0], "CodigoBanco":linea[1], "CodigoScurusal":linea[2], "NumeroCuentaOrigen":linea[3], "NumeroCuentaDestino":linea[4], "Valor":linea[5], "FechaOrigen":linea[6], "FechaPago":linea[7], "DNI":linea[8], "Estado":linea[9], "TIPO":linea[10]}
+                filecsvdni2.append(data)
+        file.close()
+        print("A continuación le solicitaremos el DNI para poder realizar su consulta.")
+    elif abrirarchivo != "chequera":
+        print("El archivo no se encuentra")
+        selectoption = input("1. Intenta nuevamente... \n2. Salir \n")
+        if selectoption == "1":
+            elegirarchivo()
+        else:
+            print("Muchas gracias por su consulta")
+            exit()
 
-def printAmigos(amigos):
-    for amigo in amigos:
-        csvfile.writerow(amigo['Nombre'], amigo ['Apellido'],amigo['Telefono'], amigo['Cumpleaños'] )
-    file.close()
+def elegirarchivo():
+    abrirarchivo = input("Ingrgese el nombre del archivo al que quiere ingresar: /n")
+    readcsv(abrirarchivo)
+
 
 def BuscarPorDni(dni, tipo):
     busqueda = []
@@ -41,8 +49,8 @@ def BuscarPorDni(dni, tipo):
             cantidad += 1
             busqueda.append(cheque)
 
-def grabarCSV(dni, busqueda):
-    file = open(dni + "_" + str(datatime) +".csv", "w")
+def grabarCSV(busqueda):
+    file = open(dni + "_" + str(datetime) +".csv", "w")
     csvfile = csv.writer(file)
     for row in busqueda:
         csvfile.writerow([row["NumeroCuentaOrigen"], row["Valor"], row["FechaOrigen"], row["FechaPago"]])
@@ -70,3 +78,4 @@ if __name__ == "__main__":
             continue
         else:
             runtime = False
+        
