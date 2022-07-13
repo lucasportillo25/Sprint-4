@@ -3,6 +3,11 @@ import csv
 from distutils.file_util import write_file
 import datetime as dt
 from tkinter.filedialog import Open
+from ast import Break
+from multiprocessing.reduction import duplicate
+from os import dup
+from sqlite3 import Timestamp
+from datetime import date, datetime
 
 #Defino constantes y variables
 filecsvdni2 = []
@@ -11,7 +16,6 @@ identificarchequesrepetidos = []
 chequesporpantalla = []
 
 #Defino funciones
-
 def readcsv(abrirarchivo):
     if abrirarchivo == "chequera":
         file = open("chequera.csv", "r")
@@ -31,8 +35,9 @@ def readcsv(abrirarchivo):
             print("Muchas gracias por su consulta")
             exit()
 
+
 def elegirarchivo():
-    abrirarchivo = input("Ingrgese el nombre del archivo al que quiere ingresar: /n")
+    abrirarchivo = input("Ingrese el nombre del archivo al que quiere ingresar: ")
     readcsv(abrirarchivo)
 
 def solicitudDNI():
@@ -123,19 +128,254 @@ def salida(solicitardni):
         print("Ingrese la opción correcta (1/2)")
         salida()
 
-def BuscarPorDni(dni, tipo):
-    busqueda = []
-    cantidad = 0
-    cheques = readFile(urlfile)
-    for cheque in cheques:
-        if cheque["DNI"] == dni and cheque["TIPO"] == tipo:
-            cantidad += 1
-            busqueda.append(cheque)
+#Mostrar resultados por pantalla
+def mostrarpantalla(solicitardni):
+    tipocheque = input("Ingrese la opción por la cual quiere recibir la información con respecto a los cheques \n 1. Emitido \n 2. Depositado \n ")
+    if tipocheque == "1":
+        estado = input("Ingrese la opción con respecto al estado de los cheques que requiera:\n 1.Cheques Pendientes\n 2.Cheques Rechazados\n 3.Cheques Aprobados\n")
+        if estado == "1":
+            mostrarpendienteemitido(solicitardni)
+        elif estado == "2":
+            mostrarrechazadoemitido(solicitardni)
+        elif estado == "3":
+            mostraraprobadoemitido(solicitardni)
+        else:
+            print("    *******************************    ")
+            print("Los datos de todos los cheques emitidos son los siguienes: ")
+            i = 0
+            for elem in filecsvdni2:
+                if str(solicitardni) == elem["DNI"] and elem["TIPO"] == "Emitido":
+                    i += 1
+                    print("------------Cheque N°" + str(i) + "--------------")
+                    int(i)
+                    for x, y in elem.items():
+                        print(x + ": " + y)
+                else:
+                    None 
+            print("    *******************************    ")
 
- 
+    elif tipocheque == "2":
+        estado = input("Ingrese la opción con respecto al estado de los cheques que requiera:\n 1.Cheques Pendientes\n 2.Cheques Rechazados\n 3.Cheques Aprobados\n")
+        if estado == "1":
+            mostrarpendientedepositado(solicitardni)
+        elif estado == "2":
+            mostrarrechazadodepositado(solicitardni)
+        elif estado == "3":
+            mostraraprobadodepositado(solicitardni)
+        else:
+            print("    *******************************    ")
+            print("Los datos de todos los cheques depositados son los siguienes: ")
+            i = 0
+            for elem in filecsvdni2:
+                if str(solicitardni) == elem["DNI"] and elem["TIPO"] == "Depositado":
+                    i += 1
+                    print("------------Cheque N°" + str(i) + "--------------")
+                    int(i)
+                    for x, y in elem.items():
+                        print(x + ": " + y)
+                else:
+                    None 
+            print("    *******************************    ")
+    else:
+        print("Ingrese la opción que requiera")
+        mostrarpantalla(solicitardni)
+
+#Mostrar resultados por csv
+def mostrarcsv(solicitardni):
+    tipocheque = input("Ingrese la opción por la cual quiere recibir la información \n 1. Emitido \n 2. Depositado \n ")
+    estado = input("Ingrese la opción con respecto al estado de los cheques que requiera:\n1.Cheques Pendientes\2.Cheques Rechazados\3.Cheques Aprobados\n")
+    if tipocheque == "1":
+        if estado == "1":
+            dt = datetime.now()
+            tiempo = datetime.timestamp(dt)
+            f = open(str(solicitardni) + "_" + str(tiempo) + ".csv", "a")
+            csvcliente = csv.writer(f)
+            for elem in filecsvdni2:
+                if str(solicitardni) == elem["DNI"] and elem["TIPO"] == "Emitido" and elem["Estado"] == "Pendiente":
+                    csvcliente.writerow([elem["NumeroCuentaDestino"],elem["Valor"],elem["FechaOrigen"],elem["FechaPago"]])
+                else:
+                    None 
+            f.close()
+        elif estado == "2":
+            dt = datetime.now()
+            tiempo = datetime.timestamp(dt)
+            f = open(str(solicitardni) + "_" + str(tiempo) + ".csv", "a")
+            csvcliente = csv.writer(f)
+            for elem in filecsvdni2:
+                if str(solicitardni) == elem["DNI"] and elem["TIPO"] == "Emitido" and elem["Estado"] == "Rechazado":
+                    csvcliente.writerow([elem["NumeroCuentaDestino"],elem["Valor"],elem["FechaOrigen"],elem["FechaPago"]])
+                else:
+                    None 
+            f.close()
+        elif estado == "3":
+            dt = datetime.now()
+            tiempo = datetime.timestamp(dt)
+            f = open(str(solicitardni) + "_" + str(tiempo) + ".csv", "a")
+            csvcliente = csv.writer(f)
+            for elem in filecsvdni2:
+                if str(solicitardni) == elem["DNI"] and elem["TIPO"] == "Emitido" and elem["Estado"] == "Aprobado":
+                    csvcliente.writerow([elem["NumeroCuentaDestino"],elem["Valor"],elem["FechaOrigen"],elem["FechaPago"]])
+                else:
+                    None 
+            f.close()
+        else:
+            dt = datetime.now()
+            tiempo = datetime.timestamp(dt)
+            f = open(str(solicitardni) + "_" + str(tiempo) + ".csv", "a")
+            csvcliente = csv.writer(f)
+            for elem in filecsvdni2:
+                if str(solicitardni) == elem["DNI"] and elem["TIPO"] == "Emitido":
+                    csvcliente.writerow([elem["NumeroCuentaDestino"],elem["Valor"],elem["FechaOrigen"],elem["FechaPago"]])
+                else:
+                    None 
+            f.close()
+    elif tipocheque == "2":
+        if estado == "1":
+            dt = datetime.now()
+            tiempo = datetime.timestamp(dt)
+            f = open(str(solicitardni) + "_" + str(tiempo) + ".csv", "a")
+            csvcliente = csv.writer(f)
+            for elem in filecsvdni2:
+                if str(solicitardni) == elem["DNI"] and elem["TIPO"] == "Depositado" and elem["Estado"] == "Pendiente":
+                    csvcliente.writerow([elem["NumeroCuentaDestino"],elem["Valor"],elem["FechaOrigen"],elem["FechaPago"]])
+                else:
+                    None 
+            f.close()
+        elif estado == "2":
+            dt = datetime.now()
+            tiempo = datetime.timestamp(dt)
+            f = open(str(solicitardni) + "_" + str(tiempo) + ".csv", "a")
+            csvcliente = csv.writer(f)
+            for elem in filecsvdni2:
+                if str(solicitardni) == elem["DNI"] and elem["TIPO"] == "Depositado" and elem["Estado"] == "Rechazado":
+                    csvcliente.writerow([elem["NumeroCuentaDestino"],elem["Valor"],elem["FechaOrigen"],elem["FechaPago"]])
+                else:
+                    None 
+            f.close()
+        elif estado == "3":
+            dt = datetime.now()
+            tiempo = datetime.timestamp(dt)
+            f = open(str(solicitardni) + "_" + str(tiempo) + ".csv", "a")
+            csvcliente = csv.writer(f)
+            for elem in filecsvdni2:
+                if str(solicitardni) == elem["DNI"] and elem["TIPO"] == "Depositado" and elem["Estado"] == "Aprobado":
+                    csvcliente.writerow([elem["NumeroCuentaDestino"],elem["Valor"],elem["FechaOrigen"],elem["FechaPago"]])
+                else:
+                    None 
+            f.close()
+        else:
+            dt = datetime.now()
+            tiempo = datetime.timestamp(dt)
+            f = open(str(solicitardni) + "_" + str(tiempo) + ".csv", "a")
+            csvcliente = csv.writer(f)
+            for elem in filecsvdni2:
+                if str(solicitardni) == elem["DNI"] and elem["TIPO"] == "Depositado":
+                    csvcliente.writerow([elem["NumeroCuentaDestino"],elem["Valor"],elem["FechaOrigen"],elem["FechaPago"]])
+                else:
+                    None 
+            f.close()
+    else:
+        print("Ingrese la opción que requiera")
+        mostrarcsv(solicitardni)
+    print("Hemos generado un archivo con los datos solicitados")
+
+
+def mostrarpendienteemitido(solicitardni):
+        print("    *******************************    ")
+        print("Los datos de los cheques pendientes emitidos son los siguienes: ")
+        i = 0
+        for elem in filecsvdni2:
+            if str(solicitardni) == elem["DNI"] and elem["TIPO"] == "Emitido" and elem["Estado"] == "Pendiente":
+                i += 1
+                print("------------Cheque N°" + str(i) + "--------------")
+                int(i)
+                for x, y in elem.items():
+                    print(x + ": " + y)
+            else:
+                None 
+        print("    *******************************    ")
+
+def mostraraprobadoemitido(solicitardni):
+        print("    *******************************    ")
+        print("Los datos de los cheques aprobados emitidos son los siguienes: ")
+        i = 0
+        for elem in filecsvdni2:
+            if str(solicitardni) == elem["DNI"] and elem["TIPO"] == "Emitido" and elem["Estado"] == "Aprobado":
+                i += 1
+                print("------------Cheque N°" + str(i) + "--------------")
+                int(i)
+                for x, y in elem.items():
+                    print(x + ": " + y)
+            else:
+                None 
+        print("    *******************************    ")
+
+def mostrarrechazadoemitido(solicitardni):
+        print("    *******************************    ")
+        print("Los datos de los cheques rechazados emitidos son los siguienes: ")
+        i = 0
+        for elem in filecsvdni2:
+            if str(solicitardni) == elem["DNI"] and elem["TIPO"] == "Emitido" and elem["Estado"] == "Rechazado":
+                i += 1
+                print("------------Cheque N°" + str(i) + "--------------")
+                int(i)
+                for x, y in elem.items():
+                    print(x + ": " + y)
+            else:
+                None 
+        print("    *******************************    ")
+
+def mostrarpendientedepositado(solicitardni):
+        print("    *******************************    ")
+        print("Los datos de los cheques depositados pendientes son los siguienes: ")
+        i = 0
+        for elem in filecsvdni2:
+            if str(solicitardni) == elem["DNI"] and elem["TIPO"] == "Depositado" and elem["Estado"] == "Pendiente":
+                i += 1
+                print("------------Cheque N°" + str(i) + "--------------")
+                int(i)
+                for x, y in elem.items():
+                    print(x + ": " + y)
+            else:
+                None 
+        print("    *******************************    ")
+
+def mostraraprobadodepositado(solicitardni):
+        print("    *******************************    ")
+        print("Los datos de los cheques depositados aprobados son los siguienes: ")
+        i = 0
+        for elem in filecsvdni2:
+            if str(solicitardni) == elem["DNI"] and elem["TIPO"] == "Depositado" and elem["Estado"] == "Aprobado":
+                i += 1
+                print("------------Cheque N°" + str(i) + "--------------")
+                int(i)
+                for x, y in elem.items():
+                    print(x + ": " + y)
+            else:
+                None 
+        print("    *******************************    ")
+
+def mostrarrechazadodepositado(solicitardni):
+        print("    *******************************    ")
+        print("Los datos de los cheques depositados rechazados son los siguienes: ")
+        i = 0
+        for elem in filecsvdni2:
+            if str(solicitardni) == elem["DNI"] and elem["TIPO"] == "Depositado" and elem["Estado"] == "Rechazado":
+                i += 1
+                print("------------Cheque N°" + str(i) + "--------------")
+                int(i)
+                for x, y in elem.items():
+                    print(x + ": " + y)
+            else:
+                None 
+        print("    *******************************    ")
+
+def rangofechas():
+    print("Determinar Rango de Fechas")
 
 #Defino el método principal
 if __name__ == "__main__":
     print("Bienvenido/a estimado/a: ")
     elegirarchivo()
     solicitudDNI()
+    print("Muchas gracias, hasta luego.")
