@@ -5,13 +5,10 @@ import datetime as dt
 from tkinter.filedialog import Open
 
 #Defino constantes y variables
-opciones = """
-"Bienvenido/a al Programa de Control de Cheques"
-"Ingrese la opcion que desee"
-"1- Cagar Nuevo cheque"
-"2- Salir"
-"""
-datatime = dt.date.today()
+filecsvdni2 = []
+solicitardni = ""
+identificarchequesrepetidos = []
+chequesporpantalla = []
 
 #Defino funciones
 
@@ -41,8 +38,9 @@ def elegirarchivo():
 def solicitudDNI():
     while True:
         try:
-            socitardni = int(input("Ingrese DNI: "))
-            print("El DNI ingresado es: " + str(socitardni))
+            solicitardni = int(input("Ingrese DNI: "))
+            print("El DNI ingresado es: " + str(solicitardni))
+            confirmacionDNI(solicitardni)
             break
 
         except ValueError:
@@ -52,6 +50,68 @@ def solicitudDNI():
             False
             break
 
+def confirmacionDNI(solicitardni):
+    confirmar = input("Quiere continuar (s/n): ")
+    if confirmar == "s" or confirmar == "n":
+        if confirmar == "s":
+            identificarcliente(solicitardni)
+        elif confirmar == "n":
+            return solicitudDNI()
+        else:
+            None
+    else:
+        print("El valor ingresado no es el correcto.")
+        confirmacionDNI(solicitardni)
+
+def identificarcliente(solicitardni):
+        for elem in filecsvdni2:
+            if str(solicitardni) == elem["DNI"]:
+                y = elem["NroCheque"]
+                identificarchequesrepetidos.append(y)
+                for i in range(len(identificarchequesrepetidos)):
+                    for j in range(len(identificarchequesrepetidos)):
+                        if i != j:
+                            if identificarchequesrepetidos[i] == identificarchequesrepetidos[j] and identificarchequesrepetidos[i] not in chequesporpantalla:
+                                chequesporpantalla.append(identificarchequesrepetidos[i])
+                                if len(chequesporpantalla) > 0:
+                                    print("Se ha encontrado dos cheques con la misma numeración...")
+                                    print("Muchas gracias por su consulta")
+                                    exit()
+                                else:
+                                    None
+                            else:
+                                None
+                        else:
+                            None
+            else:           
+                None
+        continuar(solicitardni)
+        print("No se encontraron datos relacionados al DNI ingresado.")
+        print("Muchas gracias por su consulta")
+        exit()
+
+def continuar(solicitardni):
+    for elem in filecsvdni2:
+        if str(solicitardni) == elem["DNI"]:
+            y = elem["NroCheque"]
+            identificarchequesrepetidos.append(y)
+            for i in range(len(identificarchequesrepetidos)):
+                for j in range(len(identificarchequesrepetidos)):
+                    if i != j:
+                        if identificarchequesrepetidos[i] == identificarchequesrepetidos[j] and identificarchequesrepetidos[i] not in chequesporpantalla:
+                            chequesporpantalla.append(identificarchequesrepetidos[i])
+                            if len(chequesporpantalla) > 0:
+                                salida(solicitardni)
+                                finalsaludo()
+                                exit()
+                            else:  
+                                None
+                        else:
+                            None
+                    else:
+                        None
+        else:
+            None  
 
 
 def BuscarPorDni(dni, tipo):
