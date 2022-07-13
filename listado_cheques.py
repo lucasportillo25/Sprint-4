@@ -14,7 +14,6 @@ opciones = """
 datatime = dt.date.today()
 
 #Defino funciones
-def 
 
 def readcsv(abrirarchivo):
     if abrirarchivo == "chequera":
@@ -38,6 +37,21 @@ def readcsv(abrirarchivo):
 def elegirarchivo():
     abrirarchivo = input("Ingrgese el nombre del archivo al que quiere ingresar: /n")
     readcsv(abrirarchivo)
+
+def solicitudDNI():
+    while True:
+        try:
+            socitardni = int(input("Ingrese DNI: "))
+            print("El DNI ingresado es: " + str(socitardni))
+            break
+
+        except ValueError:
+            print("El DNI ingresado es incorrecto /n")
+            print("Ingrese el DNI correctamente: ")
+            solicitudDNI()
+            False
+            break
+
 
 
 def BuscarPorDni(dni, tipo):
